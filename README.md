@@ -32,13 +32,14 @@ Here's a walkthrough of implemented user stories:
 - Search maps
 - Map insertion
 - Map deletion
-<img src='https://i.imgur.com/OOwrUNr.mp4' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='https://i.imgur.com/OOwrUNr.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 ### Display map
 - Create a new map
 - Add places
 - Terrain view
 - Save map
+<img src='https://i.imgur.com/MJEjEZk.gif' title='Video Walkthrough2' width='' alt='Video Walkthrough2' />
 
 ## Notes
 
