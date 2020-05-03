@@ -39,11 +39,16 @@ Here's a walkthrough of implemented user stories:
 - Add places
 - Terrain view
 - Save map
-<img src='https://i.imgur.com/MJEjEZk.gif' title='Video Walkthrough2' width='' alt='Video Walkthrough2' />
+<img src='https://i.imgur.com/zmJCS7e.gif' title='Video Walkthrough2' width='' alt='Video Walkthrough2' />
 
 ## Notes
+### Challenge using Room
+When defining the entity with Room, I used a type converter to convert Places to string so that it can be stored in Room.
+The downside is that Room can't easily do a query search on Places
 
-Describe any challenges encountered while building the app.
+### Challenge implementing terrain view
+When I tried to add a switch for showing the terrain view on the top action bar in the menu, the menu can't find the Id of the switch. I used a checkbox in the dropdown box instead.
+
 
 ## License
 
