@@ -1,17 +1,23 @@
 package edu.stanford.qiwen.starmap
 
+import android.app.Activity
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.SystemClock
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.animation.BounceInterpolator
+import android.widget.Toast
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import edu.stanford.qiwen.starmap.models.Place
 import edu.stanford.qiwen.starmap.models.UserMap
 import kotlin.math.max
 
@@ -33,6 +39,27 @@ class DisplayMapActivity : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+    }
+
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_display_map, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.miTerrain) {
+            // Switch between Terrain and Normal view
+            val newCheckValue = !item.isChecked
+            item.isChecked = newCheckValue
+            Log.i(TAG, "Switch option set to: $newCheckValue")
+            if (item.isChecked) {
+                mMap.mapType = GoogleMap.MAP_TYPE_TERRAIN
+            } else {
+                mMap.mapType = GoogleMap.MAP_TYPE_NORMAL
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     /**

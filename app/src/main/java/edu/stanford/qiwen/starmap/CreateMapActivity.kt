@@ -21,6 +21,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
@@ -142,7 +143,13 @@ class CreateMapActivity : AppCompatActivity(), OnMapReadyCallback {
                 return@setOnClickListener
             }
             val marker =
-                mMap.addMarker(MarkerOptions().position(latLng).title(title).snippet(description))
+                mMap.addMarker(
+                    MarkerOptions()
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET))
+                        .position(latLng)
+                        .title(title)
+                        .snippet(description)
+                )
             markers.add(marker)
             dropPinEffect(marker)
             dialog.dismiss()
