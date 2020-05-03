@@ -39,7 +39,7 @@ Here's a walkthrough of implemented user stories:
 - Add places
 - Terrain view
 - Save map
-<img src='https://i.imgur.com/zmJCS7e.gif' title='Video Walkthrough2' width='' alt='Video Walkthrough2' />
+<img src='StarMap2.gif' title='Video Walkthrough2' width='' alt='Video Walkthrough2' />
 
 ## Notes
 ### Challenge using Room
