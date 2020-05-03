@@ -85,85 +85,6 @@ class MainActivity : AppCompatActivity() {
         colorDrawableBackground = ColorDrawable(Color.parseColor("#ff0000"))
         deleteIcon = ContextCompat.getDrawable(this, R.drawable.ic_delete)!!
 
-    }
-
-    private fun showAlertDialog() {
-        val mapFormView = LayoutInflater.from(this).inflate(R.layout.dialog_create_map, null)
-        val dialog = AlertDialog.Builder(this)
-            .setTitle("Enter the Map Name")
-            .setView(mapFormView)
-            .setNegativeButton("Cancel", null)
-            .setPositiveButton("OK", null)
-            .show()
-
-        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {
-            val title = mapFormView.findViewById<EditText>(R.id.etTitle).text.toString()
-            if (title.trim().isEmpty()) {
-                Toast.makeText(
-                    this, "Place must have non-empty title",
-                    Toast.LENGTH_LONG
-                ).show()
-                return@setOnClickListener
-            }
-            // Navigate to create map activity
-
-            val intent = Intent(this@MainActivity, CreateMapActivity::class.java)
-            intent.putExtra(EXTRA_MAP_TITLE, title)
-            startActivityForResult(intent, REQUEST_CODE)
-            dialog.dismiss()
-        }
-
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            // Get new data from map
-            val userMap = data?.getSerializableExtra(EXTRA_USER_MAP) as UserMap
-            Log.i(TAG, "onActivityResult with new map title ${userMap.title}")
-            userMaps.add(userMap)
-            // Insert the new userMap into the UserMapDatabase
-            GlobalScope.launch {
-                mapDao.insertMap(userMap)
-                Log.i(TAG, "Database item insert. Num item now: " + mapDao.getAll().size)
-            }
-            // Update View
-            mapAdapter.filter.filter(searchView.query)
-        }
-        super.onActivityResult(requestCode, resultCode, data)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_search, menu)
-        // Search Item
-        val searchMenuItem: MenuItem = menu?.getItem(0) as MenuItem
-        searchView = searchMenuItem.actionView as SearchView
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                Log.i(TAG,"onQueryTextSubmit: $query")
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String): Boolean {
-                Log.i(TAG,"onQueryTextChange: $newText")
-                mapAdapter.filter.filter(newText)
-                return true
-            }
-        })
-        searchMenuItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
-            override fun onMenuItemActionExpand(p0: MenuItem?): Boolean {
-                return true
-            }
-
-            override fun onMenuItemActionCollapse(p0: MenuItem?): Boolean {
-                // Clear search text
-                searchView.setQuery("", false)
-//                mapAdapter.filter.filter("")
-                return true
-            }
-
-        })
-
-        searchView.imeOptions = EditorInfo.IME_ACTION_DONE
 
         /* Source: https://syntaxbytetutorials.com/android-recyclerview-swipe-to-delete-and-undo-with-itemtouchhelper/ */
         // Delete item animation
@@ -222,6 +143,94 @@ class MainActivity : AppCompatActivity() {
 
         val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
         itemTouchHelper.attachToRecyclerView(rvMaps)
+
+    }
+
+    private fun showAlertDialog() {
+        val mapFormView = LayoutInflater.from(this).inflate(R.layout.dialog_create_map, null)
+        val dialog = AlertDialog.Builder(this)
+            .setTitle("Enter the Map Name")
+            .setView(mapFormView)
+            .setNegativeButton("Cancel", null)
+            .setPositiveButton("OK", null)
+            .show()
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {
+            val title = mapFormView.findViewById<EditText>(R.id.etTitle).text.toString()
+            if (title.trim().isEmpty()) {
+                Toast.makeText(
+                    this, "Place must have non-empty title",
+                    Toast.LENGTH_LONG
+                ).show()
+                return@setOnClickListener
+            }
+            // Navigate to create map activity
+
+            val intent = Intent(this@MainActivity, CreateMapActivity::class.java)
+            intent.putExtra(EXTRA_MAP_TITLE, title)
+            startActivityForResult(intent, REQUEST_CODE)
+            dialog.dismiss()
+        }
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            // Get new data from map
+            val userMap = data?.getSerializableExtra(EXTRA_USER_MAP) as UserMap
+            Log.i(TAG, "onActivityResult with new map title ${userMap.title}")
+            userMaps.add(userMap)
+            // Insert the new userMap into the UserMapDatabase
+            GlobalScope.launch {
+                mapDao.insertMap(userMap)
+                Log.i(TAG, "Database item insert. Num item now: " + mapDao.getAll().size)
+            }
+            // Update View
+            mapAdapter.filter.filter(searchView.query)
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        Log.i(TAG, "onOptionsItemSelected")
+        if (item.itemId == R.id.action_search) {
+            Toast.makeText(this, "action search", Toast.LENGTH_SHORT).show()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_search, menu)
+        // Search Item
+        val searchMenuItem = menu?.findItem(R.id.action_search) as MenuItem
+        searchView = searchMenuItem.actionView as SearchView
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                Log.i(TAG,"onQueryTextSubmit: $query")
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                Log.i(TAG,"onQueryTextChange: $newText")
+                mapAdapter.filter.filter(newText)
+                return true
+            }
+        })
+        searchMenuItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(p0: MenuItem?): Boolean {
+                return true
+            }
+
+            override fun onMenuItemActionCollapse(p0: MenuItem?): Boolean {
+                // Clear search text
+                searchView.setQuery("", false)
+//                mapAdapter.filter.filter("")
+                return true
+            }
+
+        })
+
+        searchView.imeOptions = EditorInfo.IME_ACTION_DONE
 
         return super.onCreateOptionsMenu(menu)
     }
