@@ -94,6 +94,7 @@ class DisplayMapActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     /* Source: https://guides.codepath.com/android/Google-Maps-API-v2-Usage#falling-pin-animation */
+    /* Animation of the drop pin effect. */
     private fun dropPinEffect(marker: Marker) {
         // Handler allows us to repeat a code block after a specified delay
         val handler = Handler()

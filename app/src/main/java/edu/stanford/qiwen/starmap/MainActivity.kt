@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Get UserMaps from Databse
+        // Get UserMaps from Database
         mapDao = StarMapApp.getDatabase()!!.mapDao()
         GlobalScope.launch {
             userMaps = mapDao.getAll().toMutableList()
@@ -60,15 +60,16 @@ class MainActivity : AppCompatActivity() {
             Log.i(TAG, "Database num items: ${userMaps.size}")
             // Render the RecycleList after loading the user maps
             // Set adapter on the recycler view
-            mapAdapter = MapsAdapter(this@MainActivity, userMaps, object : MapsAdapter.OnClickListener {
-                override fun onItemClick(userMap: UserMap) {
-                    // When user taps on view in RV, navigate to new activity
-                    val intent = Intent(this@MainActivity, DisplayMapActivity::class.java)
-                    intent.putExtra(EXTRA_USER_MAP, userMap)
-                    startActivity(intent)
-                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
-                }
-            })
+            mapAdapter =
+                MapsAdapter(this@MainActivity, userMaps, object : MapsAdapter.OnClickListener {
+                    override fun onItemClick(userMap: UserMap) {
+                        // When user taps on view in RV, navigate to new activity
+                        val intent = Intent(this@MainActivity, DisplayMapActivity::class.java)
+                        intent.putExtra(EXTRA_USER_MAP, userMap)
+                        startActivity(intent)
+                        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+                    }
+                })
 
             this@MainActivity.runOnUiThread {
                 // Set layout manager on the recycler view
@@ -89,11 +90,19 @@ class MainActivity : AppCompatActivity() {
         /* Source: https://syntaxbytetutorials.com/android-recyclerview-swipe-to-delete-and-undo-with-itemtouchhelper/ */
         // Delete item animation
         val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
-            0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
-            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, viewHolder2: RecyclerView.ViewHolder): Boolean {
+            0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+        ) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                viewHolder2: RecyclerView.ViewHolder
+            ): Boolean {
                 return false
             }
 
+            /*
+            Set up on swiped animation.
+             */
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, swipeDirection: Int) {
                 val userMapToDelete = userMaps[viewHolder.adapterPosition]
                 // Remove the item from the list
@@ -116,16 +125,35 @@ class MainActivity : AppCompatActivity() {
                 isCurrentlyActive: Boolean
             ) {
                 val itemView = viewHolder.itemView
-                val iconMarginVertical = (viewHolder.itemView.height - deleteIcon.intrinsicHeight) / 2
+                val iconMarginVertical =
+                    (viewHolder.itemView.height - deleteIcon.intrinsicHeight) / 2
 
                 if (dX > 0) {
-                    colorDrawableBackground.setBounds(itemView.left, itemView.top, dX.toInt(), itemView.bottom)
-                    deleteIcon.setBounds(itemView.left + iconMarginVertical, itemView.top + iconMarginVertical,
-                        itemView.left + iconMarginVertical + deleteIcon.intrinsicWidth, itemView.bottom - iconMarginVertical)
+                    colorDrawableBackground.setBounds(
+                        itemView.left,
+                        itemView.top,
+                        dX.toInt(),
+                        itemView.bottom
+                    )
+                    deleteIcon.setBounds(
+                        itemView.left + iconMarginVertical,
+                        itemView.top + iconMarginVertical,
+                        itemView.left + iconMarginVertical + deleteIcon.intrinsicWidth,
+                        itemView.bottom - iconMarginVertical
+                    )
                 } else {
-                    colorDrawableBackground.setBounds(itemView.right + dX.toInt(), itemView.top, itemView.right, itemView.bottom)
-                    deleteIcon.setBounds(itemView.right - iconMarginVertical - deleteIcon.intrinsicWidth, itemView.top + iconMarginVertical,
-                        itemView.right - iconMarginVertical, itemView.bottom - iconMarginVertical)
+                    colorDrawableBackground.setBounds(
+                        itemView.right + dX.toInt(),
+                        itemView.top,
+                        itemView.right,
+                        itemView.bottom
+                    )
+                    deleteIcon.setBounds(
+                        itemView.right - iconMarginVertical - deleteIcon.intrinsicWidth,
+                        itemView.top + iconMarginVertical,
+                        itemView.right - iconMarginVertical,
+                        itemView.bottom - iconMarginVertical
+                    )
                     deleteIcon.level = 0
                 }
                 colorDrawableBackground.draw(c)
@@ -134,10 +162,23 @@ class MainActivity : AppCompatActivity() {
                 if (dX > 0)
                     c.clipRect(itemView.left, itemView.top, dX.toInt(), itemView.bottom)
                 else
-                    c.clipRect(itemView.right + dX.toInt(), itemView.top, itemView.right, itemView.bottom)
+                    c.clipRect(
+                        itemView.right + dX.toInt(),
+                        itemView.top,
+                        itemView.right,
+                        itemView.bottom
+                    )
                 deleteIcon.draw(c)
                 c.restore()
-                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                super.onChildDraw(
+                    c,
+                    recyclerView,
+                    viewHolder,
+                    dX,
+                    dY,
+                    actionState,
+                    isCurrentlyActive
+                )
             }
         }
 
@@ -146,6 +187,9 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    /*
+        Show the dialog to inform the user to enter the map name.
+     */
     private fun showAlertDialog() {
         val mapFormView = LayoutInflater.from(this).inflate(R.layout.dialog_create_map, null)
         val dialog = AlertDialog.Builder(this)
@@ -164,8 +208,8 @@ class MainActivity : AppCompatActivity() {
                 ).show()
                 return@setOnClickListener
             }
-            // Navigate to create map activity
 
+            // Navigate to create map activity
             val intent = Intent(this@MainActivity, CreateMapActivity::class.java)
             intent.putExtra(EXTRA_MAP_TITLE, title)
             startActivityForResult(intent, REQUEST_CODE)
@@ -206,16 +250,19 @@ class MainActivity : AppCompatActivity() {
         searchView = searchMenuItem.actionView as SearchView
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                Log.i(TAG,"onQueryTextSubmit: $query")
+                Log.i(TAG, "onQueryTextSubmit: $query")
                 return false
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                Log.i(TAG,"onQueryTextChange: $newText")
+                Log.i(TAG, "onQueryTextChange: $newText")
                 mapAdapter.filter.filter(newText)
                 return true
             }
         })
+
+        // When the user clicks the back button on the search bar, clear the search query in order
+        // to show all the maps.
         searchMenuItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(p0: MenuItem?): Boolean {
                 return true
@@ -224,7 +271,6 @@ class MainActivity : AppCompatActivity() {
             override fun onMenuItemActionCollapse(p0: MenuItem?): Boolean {
                 // Clear search text
                 searchView.setQuery("", false)
-//                mapAdapter.filter.filter("")
                 return true
             }
 

@@ -44,15 +44,14 @@ class MapsAdapter(
             Log.i(TAG, "Tapped on position $position")
             onClickListener.onItemClick(userMap)
         }
+        // Set up the view for each map.
         val textViewTitle = holder.itemView.findViewById<TextView>(R.id.tvMapTitle)
         val textViewNumPlaces = holder.itemView.findViewById<TextView>(R.id.tvNumPlaces)
         textViewTitle.text = userMap.title
         textViewNumPlaces.text = "${userMap.places.size} starred places"
     }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-    }
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
     // Search Item
     override fun getFilter(): Filter {
@@ -62,6 +61,11 @@ class MapsAdapter(
                 notifyDataSetChanged()
             }
 
+            /*
+                Perform the filtering based on the user search query.
+                The search query maps to any substring in the map name, or the place name or
+                description.
+             */
             override fun performFiltering(charSequence: CharSequence?): FilterResults {
                 val queryString = charSequence?.toString()?.toLowerCase(Locale.ROOT)
 

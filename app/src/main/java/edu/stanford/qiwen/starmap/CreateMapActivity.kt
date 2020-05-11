@@ -63,6 +63,7 @@ class CreateMapActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Check that `item` is the save menu option
         if (item.itemId == R.id.miSave) {
+            // Save the marker
             Log.i(TAG, "Tapped on save!")
             if (markers.isEmpty()) {
                 Toast.makeText(
@@ -122,6 +123,7 @@ class CreateMapActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(siliconValley, 10f))
     }
 
+    /** Show the dialog for creating a new marker. */
     private fun showAlertDialog(latLng: LatLng) {
         val placeFormView = LayoutInflater.from(this).inflate(R.layout.dialog_create_place, null)
         val dialog = AlertDialog.Builder(this)
